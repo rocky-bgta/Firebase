@@ -14,6 +14,14 @@ var app = firebase.initializeApp(config);
 // Get a reference to the database service
 var databaseConnection = app.database();
 
+var ref = firebase.database().ref('/users/').limitToFirst(1);
+
+ref.on("value", function(snapshot) {
+    console.log(snapshot.val());
+}, function (error) {
+    console.log("Error: " + error.code);
+});
+
 function writeUserData(db,userId, name, email, imageUrl) {
     db.ref('users/' + userId).set({
         userId:userId,
@@ -34,18 +42,22 @@ var updateObj={
 var userId = '1';
 function readData(userId) {
     return databaseConnection.ref('/users/' + userId).once('value').then(function(snapshot) {
-        var username = snapshot.val().username;
+        snapshot.forEach(function(logArrayElements){
+           console.log(logArrayElements.val().username);
+        });
+
+       /* var username = snapshot.val().username;
         var email = snapshot.val().email;
         var profile_picture = snapshot.val().profile_picture;
         console.log(username);
         console.log(email);
-        console.log(profile_picture);
+        console.log(profile_picture);*/
     });
 }
 
-
-databaseConnection.ref('/users/' + userId).update(updateObj);
-//remove data
+//update database
+//databaseConnection.ref('/users/' + userId).update(updateObj);
+//remove database
 //databaseConnection.ref('/users/' + userId).remove();
 
 
